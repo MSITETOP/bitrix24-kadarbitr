@@ -1,0 +1,1 @@
+from .bitrix24kadarbitr import KadArbitrDataLoad

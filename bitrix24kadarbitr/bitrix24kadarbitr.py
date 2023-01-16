@@ -171,6 +171,7 @@ class KadArbitrDataLoad:
 
     def __callBatch(self, msgList = []):     
         msg = '<br>'.join(msgList)
+        msgCrm = " \n ".join(msgList)
 
         entityTypeCodeToId = {
             "LEAD": 1,
@@ -208,7 +209,7 @@ class KadArbitrDataLoad:
                 'fields[ENTITYTYPEID]={placement}'.format(placement=entityTypeId), 
                 'fields[ENTITYID]={elementId}'.format(elementId=self.elementId),
                 'fields[POST_TITLE]=Кад.Арбитр', 
-                'fields[MESSAGE]={msg}'.format(msg=msg) 
+                'fields[MESSAGE]={msg}'.format(msg=msgCrm)
             ]
         }
         el = self.__bx24.callBatch(batch=batch, batch_params=batchParams)
@@ -223,19 +224,22 @@ class KadArbitrDataLoad:
               "timestamp": self.timestamp
             }
         else:
-            if self.placement == "DYNAMIC":              
-              el = self.__bx24.call('crm.item.list', {
-                'entityTypeId': self.entityTypeId,
-                'filter': {"id":self.elementId},
-                'select': ['ufCrm2KadSearch']
-              })
-              search = el.get("result").get("items")[0].get("ufCrm2KadSearch")
-            else:
-              el = self.__bx24.call('crm.'+self.placement+'.list', {
-                'filter': {"ID":self.elementId},
-                'select': ['UF_CRM_KAD_SEARCH_NEW']
-              })
-              search = el.get("result")[0].get("UF_CRM_KAD_SEARCH_NEW")
+            try:
+                if self.placement == "DYNAMIC":
+                  el = self.__bx24.call('crm.item.list', {
+                    'entityTypeId': self.entityTypeId,
+                    'filter': {"id":self.elementId},
+                    'select': ['ufCrm2KadSearch']
+                  })
+                  search = el.get("result").get("items")[0].get("ufCrm2KadSearch")
+                else:
+                  el = self.__bx24.call('crm.'+self.placement+'.list', {
+                    'filter': {"ID":self.elementId},
+                    'select': ['UF_CRM_KAD_SEARCH']
+                  })
+                  search = el.get("result")[0].get("UF_CRM_KAD_SEARCH")
+            except:
+                search = False
 
             if type(search) == str and len(search):
               res = self.getSearch(search)

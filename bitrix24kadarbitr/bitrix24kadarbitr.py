@@ -170,7 +170,7 @@ class KadArbitrDataLoad:
           return False
 
     def __callBatch(self, msgList = []):     
-        msg = '\n'.join(msgList)
+        msg = '<br>'.join(msgList)
 
         entityTypeCodeToId = {
             "LEAD": 1,

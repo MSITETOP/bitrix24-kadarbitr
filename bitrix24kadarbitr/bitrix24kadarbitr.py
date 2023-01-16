@@ -229,15 +229,15 @@ class KadArbitrDataLoad:
                   el = self.__bx24.call('crm.item.list', {
                     'entityTypeId': self.entityTypeId,
                     'filter': {"id":self.elementId},
-                    'select': ['ufCrm2KadSearch']
+                    'select': ['ufCrmKadSearch']
                   })
                   search = el.get("result").get("items")[0].get("ufCrm2KadSearch")
                 else:
                   el = self.__bx24.call('crm.'+self.placement+'.list', {
                     'filter': {"ID":self.elementId},
-                    'select': ['UF_CRM_KAD_SEARCH']
+                    'select': ['UF_CRM_'+self.placement+'_KAD_SEARCH']
                   })
-                  search = el.get("result")[0].get("UF_CRM_KAD_SEARCH")
+                  search = el.get("result")[0].get("UF_CRM_"+self.placement+"_KAD_SEARCH")
             except:
                 search = False
 

@@ -244,11 +244,11 @@ class KadArbitrDataLoad:
             except:
                 search = False
 
-            logging.debug("search: {search}".format(search)
+            logging.debug("search: {search}".format(search=search))
 
             if type(search) == str and len(search):
               res = self.getSearch(search)
-              logging.debug("search result: {res}".format(res)
+              logging.debug("search result: {res}".format(res=res))
 
               if res.get("code") == 200:
                 if self.track == True:

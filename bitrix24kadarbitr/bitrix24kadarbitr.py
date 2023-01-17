@@ -3,7 +3,6 @@ import time
 import requests
 import json
 import re
-import logging
 from crestapp import CRestApp
 
 class KadArbitrDataLoad:
@@ -85,7 +84,7 @@ class KadArbitrDataLoad:
 
     def getSearch(self, kad_search: str): 
         # kad_search = "А60-7141/2018, А60-27758/2019,А60-6450/2021 А60-12296/2014"
-        url = 'https://m.kad.arbitr.ru/Kad/Search'
+        url = 'https://m.kad.arbitr.ru/Kad/Search';
         data = {
             "Count" : 100, 
             "Courts" : [],
@@ -227,28 +226,23 @@ class KadArbitrDataLoad:
         else:
             try:
                 if self.placement == "DYNAMIC":
-                  el = self.__bx24.call('crm.item.get', {
+                  el = self.__bx24.call('crm.item.list', {
                     'entityTypeId': self.entityTypeId,
-                    'id': self.elementId
+                    'filter': {"id":self.elementId},
+                    'select': ['ufCrm2KadSearch']
                   })
-                  v = el.get("result").get("item")
-                  for k in v:
-                    if "KadSearch" in k:
-                      search = v[k]
+                  search = el.get("result").get("items")[0].get("ufCrm2KadSearch")
                 else:
                   el = self.__bx24.call('crm.'+self.placement+'.list', {
                     'filter': {"ID":self.elementId},
-                    'select': ['UF_CRM_'+self.placement+'_KAD_SEARCH']
+                    'select': ['UF_CRM_KAD_SEARCH']
                   })
-                  search = el.get("result")[0].get("UF_CRM_"+self.placement+"_KAD_SEARCH")
+                  search = el.get("result")[0].get("UF_CRM_KAD_SEARCH")
             except:
                 search = False
 
-            logging.debug("search: {search}".format(search))
-
             if type(search) == str and len(search):
               res = self.getSearch(search)
-              logging.debug("search result: {res}".format(res))
 
               if res.get("code") == 200:
                 if self.track == True:

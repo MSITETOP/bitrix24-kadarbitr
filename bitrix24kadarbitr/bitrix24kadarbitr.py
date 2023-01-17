@@ -3,7 +3,6 @@ import time
 import requests
 import json
 import re
-import logger
 from crestapp import CRestApp
 
 class KadArbitrDataLoad:
@@ -231,6 +230,7 @@ class KadArbitrDataLoad:
                     'entityTypeId': self.entityTypeId,
                     'id': self.elementId
                   })
+
                   v = el.get("result").get("item")
                   for k in v:
                     if "KadSearch" in k:

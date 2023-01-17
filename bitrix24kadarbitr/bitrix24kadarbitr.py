@@ -226,12 +226,14 @@ class KadArbitrDataLoad:
         else:
             try:
                 if self.placement == "DYNAMIC":
-                  el = self.__bx24.call('crm.item.list', {
+                  el = self.__bx24.call('crm.item.get', {
                     'entityTypeId': self.entityTypeId,
-                    'filter': {"id":self.elementId},
-                    'select': ['ufCrmKadSearch']
+                    'id': self.elementId
                   })
-                  search = el.get("result").get("items")[0].get("ufCrm2KadSearch")
+                  v = el.get("result").get("item")
+                  for k in v:
+                    if "KadSearch" in k:
+                      search = v[k]
                 else:
                   el = self.__bx24.call('crm.'+self.placement+'.list', {
                     'filter': {"ID":self.elementId},

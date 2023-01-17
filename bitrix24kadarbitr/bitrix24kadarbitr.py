@@ -3,7 +3,7 @@ import time
 import requests
 import json
 import re
-import logging
+import logger
 from crestapp import CRestApp
 
 class KadArbitrDataLoad:
@@ -85,7 +85,7 @@ class KadArbitrDataLoad:
 
     def getSearch(self, kad_search: str): 
         # kad_search = "А60-7141/2018, А60-27758/2019,А60-6450/2021 А60-12296/2014"
-        url = 'https://m.kad.arbitr.ru/Kad/Search';
+        url = 'https://m.kad.arbitr.ru/Kad/Search'
         data = {
             "Count" : 100, 
             "Courts" : [],
@@ -244,11 +244,8 @@ class KadArbitrDataLoad:
             except:
                 search = False
 
-            logging.debug("search: {search}".format(search=search))
-
             if type(search) == str and len(search):
               res = self.getSearch(search)
-              logging.debug("search result: {res}".format(res=res))
 
               if res.get("code") == 200:
                 if self.track == True:

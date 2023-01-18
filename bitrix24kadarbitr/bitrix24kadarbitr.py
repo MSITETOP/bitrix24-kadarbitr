@@ -45,7 +45,6 @@ class KadArbitrDataLoad:
           DECLARE $search AS Utf8;
           DECLARE $timestamp AS Timestamp;
           DECLARE $track AS Bool;
-
           UPSERT INTO `change_tracking`  ( `member_id`, `bx_id`, `jsonKAD`, `search`, `track`,`timestamp` ) VALUES ( $member_id, $bx_id, $jsonKAD, $search, $track, $timestamp );
           """
           prepared_values = {
@@ -170,10 +169,7 @@ class KadArbitrDataLoad:
         else:
           return False
 
-    def __callBatch(self, msgList = []):     
-        msg = '<br>'.join(msgList)
-        msgCrm = " \n ".join(msgList)
-
+    def __getEntityTypeCodeToId(self, placement):
         entityTypeCodeToId = {
             "LEAD": 1,
             "DEAL": 2,
@@ -184,11 +180,18 @@ class KadArbitrDataLoad:
             "QUOTE": 7,
             "REQUISITE": 8
         }
+        return entityTypeCodeToId.get(placement)
+
+    def __callBatch(self, msgList = []):     
+        msg = '<br>'.join(msgList)
+        msgCrm = " \n ".join(msgList)
+
+        
 
         if self.placement == "DYNAMIC": 
           entityTypeId = self.entityTypeId
         else:
-          entityTypeId = entityTypeCodeToId.get(self.placement)
+          entityTypeId = self.__getEntityTypeCodeToId(self.placement)
 
         batch={
             'get_crm': 'crm.{placement}.list'.format(placement=self.placement.lower()), 
@@ -227,28 +230,26 @@ class KadArbitrDataLoad:
         else:
             try:
                 if self.placement == "DYNAMIC":
-                  el = self.__bx24.call('crm.item.get', {
-                    'entityTypeId': self.entityTypeId,
-                    'id': self.elementId
-                  })
-                  v = el.get("result").get("item")
-                  for k in v:
-                    if "KadSearch" in k:
-                      search = v[k]
+                  entityTypeId = self.entityTypeId
                 else:
-                  el = self.__bx24.call('crm.'+self.placement+'.list', {
-                    'filter': {"ID":self.elementId},
-                    'select': ['UF_CRM_'+self.placement+'_KAD_SEARCH']
-                  })
-                  search = el.get("result")[0].get("UF_CRM_"+self.placement+"_KAD_SEARCH")
+                  entityTypeId = self.__getEntityTypeCodeToId(self.placement)
+
+                el = self.__bx24.call('crm.item.get', {
+                    'entityTypeId': entityTypeId,
+                    'id': self.elementId
+                })
+                v = el.get("result").get("item")
+                for k in v:
+                  if "KadSearch" in k:
+                    search = v[k]
             except:
                 search = False
 
-            logging.debug("search: {search}".format(search))
+            logging.debug("search: {search}".format(search=search))
 
             if type(search) == str and len(search):
               res = self.getSearch(search)
-              logging.debug("search result: {res}".format(res))
+              logging.debug("search result: {res}".format(res=res))
 
               if res.get("code") == 200:
                 if self.track == True:

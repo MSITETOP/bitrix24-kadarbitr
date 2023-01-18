@@ -163,8 +163,8 @@ class KadArbitrDataLoad:
             else: # новое дело
               msgList.append("Появилось новое дело: [URL=https://kad.arbitr.ru/Card/{CaseId}]{CaseNumber}[/URL]".format(CaseId=item.get('CaseId'), CaseNumber=item.get('CaseNumber')))
 
-          #if len(msgList)>1:
-          #  self.__callBatch(msgList)
+          if len(msgList)>1:
+            self.__callBatch(msgList)
 
           return True
         else:

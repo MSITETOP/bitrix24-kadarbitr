@@ -183,10 +183,7 @@ class KadArbitrDataLoad:
         return entityTypeCodeToId.get(placement)
 
     def __callBatch(self, msgList = []):     
-        msg = '<br>'.join(msgList)
-        msgCrm = " \n ".join(msgList)
-
-        
+        msg = '%0A'.join(msgList)      
 
         if self.placement == "DYNAMIC": 
           entityTypeId = self.entityTypeId
@@ -213,7 +210,7 @@ class KadArbitrDataLoad:
                 'fields[ENTITYTYPEID]={placement}'.format(placement=entityTypeId), 
                 'fields[ENTITYID]={elementId}'.format(elementId=self.elementId),
                 'fields[POST_TITLE]=Кад.Арбитр', 
-                'fields[MESSAGE]={msg}'.format(msg=msgCrm)
+                'fields[MESSAGE]={msg}'.format(msg=msg)
             ]
         }
         el = self.__bx24.callBatch(batch=batch, batch_params=batchParams)

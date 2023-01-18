@@ -143,28 +143,28 @@ class KadArbitrDataLoad:
           msgList = ["[URL=/crm/{placement}/details/{elementId}/] $result[get_crm][0][TITLE] [/URL]".format(placement=self.placement.lower(), elementId=self.elementId) ]
 
         if self.jsonKAD:
-            oldItems = json.loads(self.jsonKAD).get("Result").get("Items")
-            newItems = data.get("Result").get("Items")
+          oldItems = json.loads(self.jsonKAD).get("Result").get("Items")
+          newItems = data.get("Result").get("Items")
 
-            oldCases = {}
-            for item in oldItems: 
-              oldCases[item.get('CaseId')] = item
+          oldCases = {}
+          for item in oldItems: 
+            oldCases[item.get('CaseId')] = item
 
-            newCases = {}
-            for item in newItems: 
-              newCases[item.get('CaseId')] = item
-              if oldCases.get(item.get('CaseId')): # нашли такое дело
-                if item.get('IsFinished') ==  True and item.get('IsFinished') != oldCases.get(item.get('CaseId')).get("IsFinished"):
-                  msgList.append("Рассмотрение дела [URL=https://kad.arbitr.ru/Card/{CaseId}]{CaseNumber}[/URL] завершено".format(CaseId=item.get('CaseId'), CaseNumber=item.get('CaseNumber')))
+          newCases = {}
+          for item in newItems: 
+            newCases[item.get('CaseId')] = item
+            if oldCases.get(item.get('CaseId')): # нашли такое дело
+              if item.get('IsFinished') ==  True and item.get('IsFinished') != oldCases.get(item.get('CaseId')).get("IsFinished"):
+                msgList.append("Рассмотрение дела [URL=https://kad.arbitr.ru/Card/{CaseId}]{CaseNumber}[/URL] завершено".format(CaseId=item.get('CaseId'), CaseNumber=item.get('CaseNumber')))
 
-                if item.get('LastDocumentDate') != oldCases.get(item.get('CaseId')).get("LastDocumentDate"):
-                  msgList.append("По делу [URL=https://kad.arbitr.ru/Card/{CaseId}]{CaseNumber}[/URL] {LastDocumentDate}  были загружены новые документы".format(CaseId=item.get('CaseId'), CaseNumber=item.get('CaseNumber'), LastDocumentDate=time.strftime("%d.%m.%Y", time.localtime(int(item.get('LastDocumentDate')[6:16])))))
+              if item.get('LastDocumentDate') != oldCases.get(item.get('CaseId')).get("LastDocumentDate"):
+                msgList.append("По делу [URL=https://kad.arbitr.ru/Card/{CaseId}]{CaseNumber}[/URL] {LastDocumentDate}  были загружены новые документы".format(CaseId=item.get('CaseId'), CaseNumber=item.get('CaseNumber'), LastDocumentDate=time.strftime("%d.%m.%Y", time.localtime(int(item.get('LastDocumentDate')[6:16])))))
 
-              else: # новое дело
-                msgList.append("Появилось новое дело: [URL=https://kad.arbitr.ru/Card/{CaseId}]{CaseNumber}[/URL]".format(CaseId=item.get('CaseId'), CaseNumber=item.get('CaseNumber')))
+            else: # новое дело
+              msgList.append("Появилось новое дело: [URL=https://kad.arbitr.ru/Card/{CaseId}]{CaseNumber}[/URL]".format(CaseId=item.get('CaseId'), CaseNumber=item.get('CaseNumber')))
 
-            if len(msgList)>1:
-              self.__callBatch(msgList)
+          if len(msgList)>1:
+            self.__callBatch(msgList)
 
           return True
         else:

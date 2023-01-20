@@ -138,10 +138,10 @@ class KadArbitrDataLoad:
 
     def __compare(self, data: dict = {}): 
         if self.placement=="DYNAMIC":
-          msgList = ["[URL=/crm/type/{entityTypeId}/details/{elementId}/] $result[get_crm][0][TITLE] [/URL]".format(entityTypeId=self.entityTypeId, elementId=self.elementId) ]
+          msgList = ["[URL=/crm/type/{entityTypeId}/details/{elementId}/] $result[get_crm][item][title] [/URL]".format(entityTypeId=self.entityTypeId, elementId=self.elementId) ]
         else:
-          msgList = ["[URL=/crm/{placement}/details/{elementId}/] $result[get_crm][0][TITLE] [/URL]".format(placement=self.placement.lower(), elementId=self.elementId) ]
-
+          msgList = ["[URL=/crm/{placement}/details/{elementId}/] $result[get_crm][item][title] [/URL]".format(placement=self.placement.lower(), elementId=self.elementId) ]
+        
         if self.jsonKAD:
           oldItems = json.loads(self.jsonKAD).get("Result").get("Items")
           newItems = data.get("Result").get("Items")
@@ -192,18 +192,19 @@ class KadArbitrDataLoad:
           entityTypeId = self.__getEntityTypeCodeToId(self.placement)
 
         batch={
-            'get_crm': 'crm.{placement}.list'.format(placement=self.placement.lower()), 
+            'get_crm': 'crm.item.get', 
             'notify': 'im.notify', 
             'livefeedmessage': 'crm.activity.add'
         }
         batchParams={
             'get_crm': [
-                'filter[ID]={elementId}'.format(elementId=self.elementId),
-                'select[]=TITLE',
-                'select[]=ASSIGNED_BY_ID'
+                'id={elementId}'.format(elementId=self.elementId),
+                'entityTypeId={entityTypeId}'.format(entityTypeId=entityTypeId),
+                'select[]=assignedById',
+                'select[]=title'
             ],
             'notify': [
-                'to=$result[get_crm][0][ASSIGNED_BY_ID]', 
+                'to=$result[get_crm][item][assignedById]', 
                 'type=SYSTEM', 
                 'message={msg}'.format(msg=msg)
             ], 
@@ -214,6 +215,7 @@ class KadArbitrDataLoad:
                 'fields[SUBJECT]=Кад.Арбитр', 
                 'fields[COMPLETED]=Y', 
                 'fields[PROVIDER_ID]=CRM_TODO', 
+                'fields[DESCRIPTION_TYPE]=2',
                 'fields[DESCRIPTION]={msg}'.format(msg=msg)
             ]
         }

@@ -188,8 +188,10 @@ class KadArbitrDataLoad:
 
         if self.placement == "DYNAMIC": 
           entityTypeId = self.entityTypeId
+          entityType = "DYNAMIC_{entityTypeId}".format(entityTypeId = self.entityTypeId)
         else:
           entityTypeId = self.__getEntityTypeCodeToId(self.placement)
+          entityType = self.placement
 
         batch={
             'get_crm': 'crm.item.get', 
@@ -209,7 +211,7 @@ class KadArbitrDataLoad:
                 'message={msg}'.format(msg=msg)
             ], 
             'livefeedmessage' : [
-                'fields[ENTITY_TYPE]={placement}{entityTypeId}'.format(placement=self.placement, entityTypeId=self.entityTypeId), 
+                'fields[ENTITY_TYPE]={placement}'.format(placement=entityType), 
                 'fields[ENTITY_ID]={elementId}'.format(elementId=self.elementId),
                 'fields[COMMENT]={msg}'.format(msg=msg)
             ]

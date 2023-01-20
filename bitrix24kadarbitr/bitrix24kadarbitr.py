@@ -194,7 +194,7 @@ class KadArbitrDataLoad:
         batch={
             'get_crm': 'crm.item.get', 
             'notify': 'im.notify', 
-            'livefeedmessage': 'crm.activity.add'
+            'livefeedmessage': 'crm.timeline.comment.add'
         }
         batchParams={
             'get_crm': [
@@ -209,14 +209,9 @@ class KadArbitrDataLoad:
                 'message={msg}'.format(msg=msg)
             ], 
             'livefeedmessage' : [
-                'fields[OWNER_TYPE_ID]={placement}'.format(placement=entityTypeId), 
-                'fields[OWNER_ID]={elementId}'.format(elementId=self.elementId),
-                'fields[TYPE_ID]=6', 
-                'fields[SUBJECT]=Кад.Арбитр', 
-                'fields[COMPLETED]=Y', 
-                'fields[PROVIDER_ID]=CRM_TODO', 
-                'fields[DESCRIPTION_TYPE]=2',
-                'fields[DESCRIPTION]={msg}'.format(msg=msg)
+                'fields[ENTITY_TYPE]={placement}{entityTypeId}'.format(placement=self.placement, entityTypeId=self.entityTypeId), 
+                'fields[ENTITY_ID]={elementId}'.format(elementId=self.elementId),
+                'fields[COMMENT]={msg}'.format(msg=msg)
             ]
         }
         el = self.__bx24.callBatch(batch=batch, batch_params=batchParams)

@@ -7,7 +7,7 @@ import logging
 from crestapp import CRestApp
 
 class KadArbitrDataLoad:
-    def __init__(self, member_id = '', placement = '',  entityTypeId = '', elementId = '', client_id = '', client_secret = '', ydb_session):  
+    def __init__(self, member_id = '', placement = '',  entityTypeId = '', elementId = '', client_id = '', client_secret = '', ydb_session = False):  
         self.member_id = member_id
         self.bx_id = str(placement)+''+str(entityTypeId)+'_'+str(elementId)
         self.placement = placement

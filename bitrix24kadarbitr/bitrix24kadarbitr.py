@@ -7,7 +7,7 @@ import logging
 from crestapp import CRestApp
 
 class KadArbitrDataLoad:
-    def __init__(self, member_id = '', placement = '',  entityTypeId = '', elementId = '', client_id = '', client_secret = '', ydb_endpoint = '', ydb_database = '', ydb_credentials = False):  
+    def __init__(self, member_id = '', placement = '',  entityTypeId = '', elementId = '', client_id = '', client_secret = '', ydb_session):  
         self.member_id = member_id
         self.bx_id = str(placement)+''+str(entityTypeId)+'_'+str(elementId)
         self.placement = placement
@@ -15,20 +15,13 @@ class KadArbitrDataLoad:
         self.elementId =elementId
         self.track = False
 
-        if ydb_credentials != False:
-            driver = ydb.Driver(endpoint=ydb_endpoint, database=ydb_database, credentials=ydb.AccessTokenCredentials(ydb_credentials))
-        else:
-            driver = ydb.Driver(endpoint=ydb_endpoint, database=ydb_database)
-        driver.wait(fail_fast=True, timeout=5)
-        self.__session = driver.table_client.session().create()
+        self.__session = ydb_session
 
         self.__bx24 = CRestApp(
             member_id = member_id, 
             client_id = client_id, 
             client_secret = client_secret, 
-            ydb_endpoint = ydb_endpoint, 
-            ydb_database = ydb_database, 
-            ydb_credentials = ydb_credentials
+            ydb_session = ydb_session
         )
 
     def __setAppSettings(self, jsonKAD = "", search = "", track = False):

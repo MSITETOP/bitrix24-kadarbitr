@@ -242,7 +242,7 @@ class KadArbitrDataLoad:
                 logging.info("crm.item.get: {v}".format(v=v))
                 search = False
                 for k in v:
-                  if "KadSearch" in k and type(v[k]) and len(v[k]):                    
+                  if "KadSearch" in k and type(v[k]) == str and len(v[k]):                    
                     search = v[k]
             except:
                 search = False

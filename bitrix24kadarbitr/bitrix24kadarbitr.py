@@ -24,7 +24,7 @@ class KadArbitrDataLoad:
             ydb_session = ydb_session
         )
 
-    def __setAppSettings(self, jsonKAD = {}, search = "", track = False):
+    def __setAppSettings(self, jsonKAD = "", search = "", track = False):
         try:
           if self.track == True:
             track = True

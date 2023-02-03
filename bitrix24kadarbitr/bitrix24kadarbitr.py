@@ -24,7 +24,7 @@ class KadArbitrDataLoad:
             ydb_session = ydb_session
         )
 
-    def __setAppSettings(self, jsonKAD = "", search = "", track = False):
+    def __setAppSettings(self, jsonKAD = {}, search = "", track = False):
         try:
           if self.track == True:
             track = True
@@ -241,7 +241,7 @@ class KadArbitrDataLoad:
 
             if type(search) == str and len(search):
               res = self.getSearch(search)
-              logging.debug("search result: {res}".format(res=res))
+              logging.info("search result: {res}".format(res=res))
 
               if res.get("code") == 200:
                 if self.track == True:

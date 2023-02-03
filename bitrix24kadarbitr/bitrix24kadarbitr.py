@@ -28,8 +28,6 @@ class KadArbitrDataLoad:
         try:
           if self.track == True:
             track = True
-          else:
-            track = False  
 
           query = """
           DECLARE $member_id AS Utf8;
@@ -265,6 +263,7 @@ class KadArbitrDataLoad:
                   "error": "Данные не получены. Ошибка ответа Кад.Арбитр. Статус ответа: " + res.get("code"),
                 }
             else:
+                self.__setAppSettings(jsonKAD = self.jsonKAD, search = self.search)
                 return {
                   "error": 'Не заполено поле "Поиск в Кад.Арбитр"',
                 }

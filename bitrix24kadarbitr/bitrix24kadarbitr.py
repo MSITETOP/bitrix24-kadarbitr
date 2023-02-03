@@ -273,9 +273,9 @@ class KadArbitrDataLoad:
                   "error": "Данные не получены. Ошибка ответа Кад.Арбитр. Статус ответа: " + res.get("code"),
                 }
             else:
-                if self.jsonKAD:
+                try:
                     self.__setAppSettings(jsonKAD = self.jsonKAD, search = self.search)
-                else:
+                except:
                     self.__setAppSettings()  
                     
                 return {

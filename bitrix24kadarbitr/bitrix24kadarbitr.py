@@ -26,8 +26,15 @@ class KadArbitrDataLoad:
 
     def __setAppSettings(self, jsonKAD = "", search = "", track = False):
         try:
+          if jsonKAD == None: 
+            jsonKAD = ""
+          if search == None: 
+            search = ""  
+            
           logging.info("__setAppSettings: jsonKAD ={jsonKAD}, search = {search}".format(jsonKAD=jsonKAD, search=search))
             
+            
+         
           if self.track == True:
             track = True
 

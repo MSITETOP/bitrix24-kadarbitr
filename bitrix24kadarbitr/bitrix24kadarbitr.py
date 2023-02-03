@@ -241,7 +241,7 @@ class KadArbitrDataLoad:
                 v = el.get("result").get("item")
                 search = False
                 for k in v:
-                  if "KadSearch" in k:
+                  if "KadSearch" in k and type(v[k]) and len(v[k]):                    
                     search = v[k]
             except:
                 search = False

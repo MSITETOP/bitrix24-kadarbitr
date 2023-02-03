@@ -246,7 +246,7 @@ class KadArbitrDataLoad:
             except:
                 search = False
 
-            logging.debug("search: {search}".format(search=search))
+            logging.info("search: {search}".format(search=search))
 
             if type(search) == str and len(search):
               res = self.getSearch(search)
@@ -273,7 +273,11 @@ class KadArbitrDataLoad:
                   "error": "Данные не получены. Ошибка ответа Кад.Арбитр. Статус ответа: " + res.get("code"),
                 }
             else:
-                self.__setAppSettings(jsonKAD = self.jsonKAD, search = self.search)
+                if self.jsonKAD:
+                    self.__setAppSettings(jsonKAD = self.jsonKAD, search = self.search)
+                else:
+                    self.__setAppSettings()  
+                    
                 return {
                   "error": 'Не заполено поле "Поиск в Кад.Арбитр"',
                 }

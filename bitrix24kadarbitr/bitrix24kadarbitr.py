@@ -230,6 +230,7 @@ class KadArbitrDataLoad:
                     'id': self.elementId
                 })
                 v = el.get("result").get("item")
+                search = False
                 for k in v:
                   if "KadSearch" in k:
                     search = v[k]

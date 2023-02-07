@@ -155,8 +155,9 @@ class KadArbitrDataLoad:
               if item.get('IsFinished') ==  True and item.get('IsFinished') != oldCases.get(item.get('CaseId')).get("IsFinished"):
                 msgList.append("Рассмотрение дела [URL=https://kad.arbitr.ru/Card/{CaseId}]{CaseNumber}[/URL] завершено".format(CaseId=item.get('CaseId'), CaseNumber=item.get('CaseNumber')))
 
-              if item.get('LastDocumentDate') != oldCases.get(item.get('CaseId')).get("LastDocumentDate"):
-                msgList.append("По делу [URL=https://kad.arbitr.ru/Card/{CaseId}]{CaseNumber}[/URL] {LastDocumentDate}  были загружены новые документы".format(CaseId=item.get('CaseId'), CaseNumber=item.get('CaseNumber'), LastDocumentDate=time.strftime("%d.%m.%Y", time.localtime(int(item.get('LastDocumentDate')[6:16])))))
+              if item.get('LastDocumentDate') and item.get('LastDocumentDate') != oldCases.get(item.get('CaseId')).get("LastDocumentDate"):
+                casetime = time.strftime("%d.%m.%Y", time.localtime(int(item.get('LastDocumentDate')[6:16])))
+                msgList.append("По делу [URL=https://kad.arbitr.ru/Card/{CaseId}]{CaseNumber}[/URL] {LastDocumentDate}  были загружены новые документы".format(CaseId=item.get('CaseId'), CaseNumber=item.get('CaseNumber'), LastDocumentDate=casetime))
 
             else: # новое дело
               msgList.append("Появилось новое дело: [URL=https://kad.arbitr.ru/Card/{CaseId}]{CaseNumber}[/URL]".format(CaseId=item.get('CaseId'), CaseNumber=item.get('CaseNumber')))

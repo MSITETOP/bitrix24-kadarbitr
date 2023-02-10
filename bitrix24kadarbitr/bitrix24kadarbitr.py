@@ -219,7 +219,7 @@ class KadArbitrDataLoad:
         return el
 
     def getActualData(self): 
-        if self.__getAppSettings() and (self.timestamp + (3600*12)*1000000) > int(time.time()*1000000) :
+        if self.__getAppSettings() and (self.timestamp + (3600*24)*1000000) > int(time.time()*1000000) :
             logging.info("actual data: jsonKAD ={jsonKAD}, search = {search}".format(jsonKAD=self.jsonKAD, search=self.search))
             return {
               "jsonKAD": json.loads(self.jsonKAD),

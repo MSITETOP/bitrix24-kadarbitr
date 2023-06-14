@@ -138,7 +138,7 @@ class KadArbitrDataLoad:
         if self.placement=="DYNAMIC":
           msgList = ["[URL=/crm/type/{entityTypeId}/details/{elementId}/] $result[get_crm][item][title] [/URL]".format(entityTypeId=self.entityTypeId, elementId=self.elementId) ]
           entityTypeId = self.entityTypeId
-          fieldPrefix = self.entityTypeId
+          fieldPrefix = '$result[get_type][types][id]'
         else:
           msgList = ["[URL=/crm/{placement}/details/{elementId}/] $result[get_crm][item][title] [/URL]".format(placement=self.placement.lower(), elementId=self.elementId) ]
           entityTypeId = self.__getEntityTypeCodeToId(self.placement)
@@ -214,6 +214,7 @@ class KadArbitrDataLoad:
 
         batch={
             'get_crm': 'crm.item.get', 
+            'get_type': 'crm.type.list',
             'item_update': 'crm.item.update',
             'notify': 'im.notify', 
             'livefeedmessage': 'crm.timeline.comment.add'
@@ -224,6 +225,11 @@ class KadArbitrDataLoad:
                 'entityTypeId': '{entityTypeId}'.format(entityTypeId=entityTypeId),
                 'select': ['assignedById','title']
             },
+            'get_type': {
+                'filter': {
+                    'entityTypeId': entityTypeId
+                }
+            }, 
             'item_update': updateFields,
             'notify': {
                 'to': '$result[get_crm][item][assignedById]', 
@@ -237,7 +243,8 @@ class KadArbitrDataLoad:
                     'COMMENT': '{msg}'.format(msg=msg)
                 }
             }
-        }
+        }      
+
         el = self.__bx24.callBatch(batch=batch, batch_params=batchParams)
         return el
 

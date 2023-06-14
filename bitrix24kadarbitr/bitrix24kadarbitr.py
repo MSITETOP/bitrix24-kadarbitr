@@ -138,7 +138,7 @@ class KadArbitrDataLoad:
         if self.placement=="DYNAMIC":
           msgList = ["[URL=/crm/type/{entityTypeId}/details/{elementId}/] $result[get_crm][item][title] [/URL]".format(entityTypeId=self.entityTypeId, elementId=self.elementId) ]
           entityTypeId = self.entityTypeId
-          fieldPrefix = '$result[get_type][types][0][id]'
+          fieldPrefix = '$result[get_type][types][0][id]+'
         else:
           msgList = ["[URL=/crm/{placement}/details/{elementId}/] $result[get_crm][item][title] [/URL]".format(placement=self.placement.lower(), elementId=self.elementId) ]
           entityTypeId = self.__getEntityTypeCodeToId(self.placement)

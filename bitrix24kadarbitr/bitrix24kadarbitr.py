@@ -199,23 +199,23 @@ class KadArbitrDataLoad:
             'livefeedmessage': 'crm.timeline.comment.add'
         }
         batchParams={
-            'get_crm': [
+            'get_crm': {
                 'id': '{elementId}'.format(elementId=self.elementId),
                 'entityTypeId': '{entityTypeId}'.format(entityTypeId=entityTypeId),
                 'select': ['assignedById','title']
-            ],
-            'notify': [
+            },
+            'notify': {
                 'to': '$result[get_crm][item][assignedById]', 
                 'type': 'SYSTEM', 
                 'message': '{msg}'.format(msg=msg)
-            ], 
-            'livefeedmessage' : [
+            }, 
+            'livefeedmessage': {
                 'fields': {
                     'ENTITY_TYPE': '{placement}'.format(placement=entityType), 
                     'ENTITY_ID': '{elementId}'.format(elementId=self.elementId),
                     'COMMENT': '{msg}'.format(msg=msg)
                 }
-            ]
+            }
         }
         el = self.__bx24.callBatch(batch=batch, batch_params=batchParams)
         return el

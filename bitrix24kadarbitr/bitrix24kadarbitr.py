@@ -184,7 +184,7 @@ class KadArbitrDataLoad:
         return entityTypeCodeToId.get(placement)
 
     def __callBatch(self, msgList = [], updateFields = {}):     
-        msg = '%0A'.join(msgList)      
+        msg = '\n'.join(msgList)      
 
         if self.placement == "DYNAMIC": 
           entityTypeId = self.entityTypeId

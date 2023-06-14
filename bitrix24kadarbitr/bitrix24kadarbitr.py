@@ -137,8 +137,12 @@ class KadArbitrDataLoad:
     def __compare(self, data: dict = {}): 
         if self.placement=="DYNAMIC":
           msgList = ["[URL=/crm/type/{entityTypeId}/details/{elementId}/] $result[get_crm][item][title] [/URL]".format(entityTypeId=self.entityTypeId, elementId=self.elementId) ]
+          entityTypeId = self.entityTypeId
+          fieldPrefix = self.entityTypeId
         else:
           msgList = ["[URL=/crm/{placement}/details/{elementId}/] $result[get_crm][item][title] [/URL]".format(placement=self.placement.lower(), elementId=self.elementId) ]
+          entityTypeId = self.__getEntityTypeCodeToId(self.placement)
+          fieldPrefix = self.placement.capitalize()
         
         if self.jsonKAD:
           oldItems = json.loads(self.jsonKAD).get("Result").get("Items")
@@ -149,22 +153,37 @@ class KadArbitrDataLoad:
             oldCases[item.get('CaseId')] = item
 
           newCases = {}
+          fieldNewCases = []
+          fieldEndCases = []
+          fieldUpdCases = []
           for item in newItems: 
             newCases[item.get('CaseId')] = item
             if oldCases.get(item.get('CaseId')): # нашли такое дело
               if item.get('IsFinished') ==  True and item.get('IsFinished') != oldCases.get(item.get('CaseId')).get("IsFinished"):
                 msgList.append("Рассмотрение дела [URL=https://kad.arbitr.ru/Card/{CaseId}]{CaseNumber}[/URL] завершено".format(CaseId=item.get('CaseId'), CaseNumber=item.get('CaseNumber')))
+                fieldEndCases.append("{CaseId}#{CaseNumber}".format(CaseId=item.get('CaseId'), CaseNumber=item.get('CaseNumber')))
 
               if item.get('LastDocumentDate') and item.get('LastDocumentDate') != oldCases.get(item.get('CaseId')).get("LastDocumentDate"):
                 casetime = time.strftime("%d.%m.%Y", time.localtime(int(item.get('LastDocumentDate')[6:16])))
                 msgList.append("По делу [URL=https://kad.arbitr.ru/Card/{CaseId}]{CaseNumber}[/URL] {LastDocumentDate}  были загружены новые документы".format(CaseId=item.get('CaseId'), CaseNumber=item.get('CaseNumber'), LastDocumentDate=casetime))
+                fieldUpdCases.append("{CaseId}#{CaseNumber}#{LastDocumentDate}".format(CaseId=item.get('CaseId'), CaseNumber=item.get('CaseNumber'), LastDocumentDate=casetime))
 
             else: # новое дело
               msgList.append("Появилось новое дело: [URL=https://kad.arbitr.ru/Card/{CaseId}]{CaseNumber}[/URL]".format(CaseId=item.get('CaseId'), CaseNumber=item.get('CaseNumber')))
+              fieldNewCases.append("{CaseId}#{CaseNumber}".format(CaseId=item.get('CaseId'), CaseNumber=item.get('CaseNumber')))
 
           if len(msgList)>1:
             logging.info("Send to b24: {msgList}".format(msgList=msgList))
-            self.__callBatch(msgList)
+            updateFields = {
+                'entityTypeId': entityTypeId,
+                'id': self.elementId,
+                'fields': {
+                    'ufCrm{pref}NewCases'.format(pref=fieldPrefix): fieldNewCases,
+                    'ufCrm{pref}EndCases'.format(pref=fieldPrefix): fieldEndCases,
+                    'ufCrm{pref}UpdCases'.format(pref=fieldPrefix): fieldUpdCases
+                }
+            }
+            self.__callBatch(msgList, updateFields)
 
           return True
         else:
@@ -195,6 +214,7 @@ class KadArbitrDataLoad:
 
         batch={
             'get_crm': 'crm.item.get', 
+            'item_update': 'crm.item.update',
             'notify': 'im.notify', 
             'livefeedmessage': 'crm.timeline.comment.add'
         }
@@ -204,6 +224,7 @@ class KadArbitrDataLoad:
                 'entityTypeId': '{entityTypeId}'.format(entityTypeId=entityTypeId),
                 'select': ['assignedById','title']
             },
+            'item_update': updateFields,
             'notify': {
                 'to': '$result[get_crm][item][assignedById]', 
                 'type': 'SYSTEM', 

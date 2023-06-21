@@ -134,11 +134,21 @@ class KadArbitrDataLoad:
         else:
           return False
 
+    def __getTypeId(self):
+        try:
+          query = 'DECLARE $member_id AS Utf8; DECLARE $bx_id AS Utf8; SELECT `bx_type` FROM `change_tracking`  WHERE `member_id` = $member_id AND `bx_id` = $bx_id;'
+          prepared_query = self.__session.prepare(query)
+          res = self.__session.transaction(ydb.SerializableReadWrite()).execute( prepared_query, { '$member_id': self.member_id, '$bx_id': self.bx_id }, commit_tx=True )   
+          settings = res[0].rows[0]
+          return settings.get("bx_type")
+        except:
+          return 0
+
     def __compare(self, data: dict = {}): 
         if self.placement=="DYNAMIC":
           msgList = ["[URL=/crm/type/{entityTypeId}/details/{elementId}/] $result[get_crm][item][title] [/URL]".format(entityTypeId=self.entityTypeId, elementId=self.elementId) ]
           entityTypeId = self.entityTypeId
-          fieldPrefix = self.entityTypeId
+          fieldPrefix = self.__getTypeId()
         else:
           msgList = ["[URL=/crm/{placement}/details/{elementId}/] $result[get_crm][item][title] [/URL]".format(placement=self.placement.lower(), elementId=self.elementId) ]
           entityTypeId = self.__getEntityTypeCodeToId(self.placement)

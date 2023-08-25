@@ -7,13 +7,14 @@ import logging
 from crestapp import CRestApp
 
 class KadArbitrDataLoad:
-    def __init__(self, member_id = '', placement = '',  entityTypeId = '', elementId = '', client_id = '', client_secret = '', ydb_session = False):  
+    def __init__(self, member_id = '', placement = '',  entityTypeId = '', elementId = '', client_id = '', client_secret = '', pr_fp = '', ydb_session = False):  
         self.member_id = member_id
         self.bx_id = str(placement)+''+str(entityTypeId)+'_'+str(elementId)
         self.placement = placement
         self.entityTypeId = entityTypeId
-        self.elementId =elementId
+        self.elementId = elementId
         self.track = False
+        self.pr_fp = pr_fp
 
         self.__session = ydb_session
 
@@ -103,7 +104,7 @@ class KadArbitrDataLoad:
             'Connection': 'keep-alive',
             'Content-Type': 'application/json',
             'Host': 'kad.arbitr.ru',
-            'Cookie': 'pr_fp=f3110cb19f44e051e916916e1f52a37b09330eb78ac3e59b94c5b6b4ffe27353;', 
+            'Cookie': 'pr_fp={pr_fp};'.format(pr_fp = self.pr_fp), 
             'Origin': 'https://kad.arbitr.ru',
             'Referer': 'https://kad.arbitr.ru/',
             'X-Requested-With': 'XMLHttpRequest'
